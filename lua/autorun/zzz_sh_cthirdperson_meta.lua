@@ -249,8 +249,13 @@ if SERVER then
 end
 
 local pGetInfoNum = PLAYER.GetInfoNum
-local toggleBind = CLIENT and CreateClientConVar("cl_thirdperson_toggle", "", true, true, "keybind, this isn't a concommand")
-local shoulderBind = CLIENT and CreateClientConVar("cl_thirdperson_switchshoulder", "", true, true, "keybind, this isn't a concommand")
+local toggleBind = nil
+local shoulderBind = nil
+
+if CLIENT then
+	toggleBind = CreateClientConVar("cl_thirdperson_toggle", "", true, true, "keybind, this isn't a concommand")
+	shoulderBind = CreateClientConVar("cl_thirdperson_switchshoulder", "", true, true, "keybind, this isn't a concommand")
+end
 
 hook.Add("PlayerButtonDown", "CThirdPerson.DoToggles", function(ply, button)
 	local toggleKey = CLIENT and toggleBind:GetInt() or pGetInfoNum(ply, "cl_thirdperson_toggle", 0)

@@ -52,7 +52,12 @@ end
 
 local pGetViewEntity = PLAYER.GetViewEntity
 local allowed = CreateConVar("sv_thirdperson_allowed", 1, cf)
-local clEnabled = CLIENT and CreateClientConVar("cl_thirdperson", 1, true, true, "", 0, 1)
+local clEnabled = nil
+
+if CLIENT then
+	clEnabled = CreateClientConVar("cl_thirdperson", 1, true, true, "", 0, 1)
+end
+
 local cachedCanDoThirdPerson = {}
 
 function CoreClass:CanDoThirdPerson(ply, forceCheck)
@@ -147,9 +152,16 @@ local pGetActiveWeapon = PLAYER.GetActiveWeapon
 local eGetVelocity = ENTITY.GetVelocity
 local pGetWalkSpeed = PLAYER.GetWalkSpeed
 local pGetCrouchedWalkSpeed = PLAYER.GetCrouchedWalkSpeed
-local horizontalOffset = CLIENT and CreateClientConVar("cl_thirdperson_offset_horizontal", 0, true, true, "", -10, 10)
-local verticalOffset = CLIENT and CreateClientConVar("cl_thirdperson_offset_vertical", 10, true, true, "", 0, 15)
-local distanceOffset = CLIENT and CreateClientConVar("cl_thirdperson_offset_distance", 50, true, true, "", 0, 100)
+local horizontalOffset = nil
+local verticalOffset = nil
+local distanceOffset = nil
+
+if CLIENT then
+	horizontalOffset = CreateClientConVar("cl_thirdperson_offset_horizontal", 0, true, true, "", -10, 10)
+	verticalOffset = CreateClientConVar("cl_thirdperson_offset_vertical", 10, true, true, "", 0, 15)
+	distanceOffset = CreateClientConVar("cl_thirdperson_offset_distance", 50, true, true, "", 0, 100)
+end
+
 local crouchOffset = {5, -5, -5}
 local crouchWalkOffset = {0, 7.5, 0}
 local aimOriginOffset = {5, 0, -10}
