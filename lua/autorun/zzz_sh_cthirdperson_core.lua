@@ -1,45 +1,6 @@
 local CoreClass = {}
 CoreClass.__index = CoreClass
 
-local toggleKeys = {}
-
-function CoreClass:GetToggleKey(ply)
-	return toggleKeys[ply]
-end
-
-function CoreClass:SetToggleKey(ply, keyCode)
-	toggleKeys[ply] = keyCode
-end
-
-local ENTITY = FindMetaTable("Entity")
-local PLAYER = FindMetaTable("Player")
-local pGetInfoNum = PLAYER.GetInfoNum
-local thirdPersonToggle = {}
-
-function CoreClass:GetThirdPersonToggle(ply)
-	local cachedToggle = thirdPersonToggle[ply]
-
-	if cachedToggle != nil then
-		return cachedToggle
-	end
-
-	return pGetInfoNum(ply, "cl_thirdperson", 0) == 1
-end
-
-function CoreClass:SetThirdPersonToggle(ply, toggle)
-	thirdPersonToggle[ply] = toggle
-end
-
-local shoulderKeys = {}
-
-function CoreClass:GetShoulderKey(ply)
-	return shoulderKeys[ply]
-end
-
-function CoreClass:SetShoulderKey(ply, keyCode)
-	shoulderKeys[ply] = keyCode
-end
-
 local shoulderToggle = {}
 
 function CoreClass:GetShoulderToggle(ply)
@@ -50,14 +11,16 @@ function CoreClass:SetShoulderToggle(ply, toggle)
 	shoulderToggle[ply] = toggle
 end
 
+local PLAYER = FindMetaTable("Player")
 local pGetViewEntity = PLAYER.GetViewEntity
 local allowed = CreateConVar("sv_thirdperson_allowed", 1, cf)
 local clEnabled = nil
 
 if CLIENT then
-	clEnabled = CreateClientConVar("cl_thirdperson", 1, true, true, "", 0, 1)
+	clEnabled = CreateClientConVar("cl_thirdperson_enable", 1, true, true, "", 0, 1)
 end
 
+local pGetInfoNum = PLAYER.GetInfoNum
 local cachedCanDoThirdPerson = {}
 
 function CoreClass:CanDoThirdPerson(ply, forceCheck)
@@ -65,9 +28,9 @@ function CoreClass:CanDoThirdPerson(ply, forceCheck)
 		return cachedCanDoThirdPerson[ply] or false
 	end
 
-	local isEnabled = CLIENT and clEnabled:GetBool() or pGetInfoNum(ply, "cl_thirdperson", 0) == 1
+	local isEnabled = CLIENT and clEnabled:GetBool() or pGetInfoNum(ply, "cl_thirdperson_enable", 0) == 1
 
-	if !allowed:GetBool() or !isEnabled or !self:GetThirdPersonToggle(ply) then
+	if !allowed:GetBool() or !isEnabled then
 		return false
 	end
 
@@ -81,6 +44,7 @@ function CoreClass:CanDoThirdPerson(ply, forceCheck)
 	return true
 end
 
+local ENTITY = FindMetaTable("Entity")
 local eIsFlagSet = ENTITY.IsFlagSet
 local pGetHull = PLAYER.GetHull
 local eGetBonePosition = ENTITY.GetBonePosition

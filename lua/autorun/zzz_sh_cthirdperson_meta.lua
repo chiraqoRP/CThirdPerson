@@ -154,8 +154,6 @@ if CLIENT then
 				eDrawShadow(ply, ply.__PreviousShadowStatus)
 			end
 
-			-- print("isVisible ", ply, isVisible)
-
 			hiddenPlayers[userID] = !isVisible or nil
 			lastDrawThink = curTime
 		end
@@ -168,7 +166,6 @@ if CLIENT then
 		render.SetBlend(Lerp(math.ease.InOutSine(blendFrac), 0, 1))
 
 		if isHidden and blendFrac > 0.98 then
-			-- print("returned true for ", ply)
 			return true
 		end
 	end)
@@ -223,8 +220,6 @@ if CLIENT then
 		end
 
 		if shouldUpdate then
-			print("RenderOverride changed!")
-
 			for i, ply in player.Iterator() do
 				local wep = pGetActiveWeapon(ply)
 
@@ -236,9 +231,19 @@ if CLIENT then
 
 		lastCanDo = canDo
 	end)
-end
 
-if SERVER then
+	local clEnabled = nil
+
+	concommand.Add("cl_thirdperson_toggle", function(ply, cmd, args, argStr)
+		clEnabled = clEnabled or GetConVar("cl_thirdperson_enable")
+
+		if !clEnabled then
+			return
+		end
+
+		clEnabled:SetBool(!clEnabled:GetBool())
+	end)
+else
 	hook.Add("PlayerPostThink", "CThirdPerson.UpdateFactors", function(ply)
 		if !hasCachedClass then
 			cCore = CThirdPerson
@@ -249,19 +254,16 @@ if SERVER then
 end
 
 local pGetInfoNum = PLAYER.GetInfoNum
-local toggleBind = nil
 local shoulderBind = nil
 
 if CLIENT then
-	toggleBind = CreateClientConVar("cl_thirdperson_toggle", "", true, true, "keybind, this isn't a concommand")
 	shoulderBind = CreateClientConVar("cl_thirdperson_switchshoulder", "", true, true, "keybind, this isn't a concommand")
 end
 
-hook.Add("PlayerButtonDown", "CThirdPerson.DoToggles", function(ply, button)
-	local toggleKey = CLIENT and toggleBind:GetInt() or pGetInfoNum(ply, "cl_thirdperson_toggle", 0)
+hook.Add("PlayerButtonDown", "CThirdPerson.ShoulderSwitch", function(ply, button)
 	local shoulderKey = CLIENT and shoulderBind:GetInt() or pGetInfoNum(ply, "cl_thirdperson_switchshoulder", 0)
 
-	if !toggleKey or !shoulderKey or (button != toggleKey and button != shoulderKey) then
+	if !shoulderKey or button != shoulderKey then
 		return
 	end
 
@@ -269,15 +271,9 @@ hook.Add("PlayerButtonDown", "CThirdPerson.DoToggles", function(ply, button)
 		return
 	end
 
-	if button == toggleKey then
-		local isToggled = cCore:GetThirdPersonToggle(ply)
+	local isLeftShoulder = cCore:GetShoulderToggle(ply)
 
-		cCore:SetThirdPersonToggle(ply, !isToggled)
-	elseif button == shoulderKey then
-		local isLeftShoulder = cCore:GetShoulderToggle(ply)
-
-		cCore:SetShoulderToggle(ply, !isLeftShoulder)
-	end
+	cCore:SetShoulderToggle(ply, !isLeftShoulder)
 end)
 
 local fpAiming = GetConVar("cl_thirdperson_fpaiming")
