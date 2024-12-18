@@ -18,6 +18,8 @@ this is done by finding your desired key's [enum](https://wiki.facepunch.com/gmo
   * Modifies the cameras distance.
 * ``cl_thirdperson_fpaiming`` - (``0/1``)
   * If this is enabled, the players thirdperson camera will switch to firstperson when aiming with a weapon.
+* ``cl_thirdperson_enforce_hook`` - (``0/1``)
+  * If this is enabled, all other CalcView hooks will be overriden by the thirdperson hook.
 * ``cl_thirdperson_switchshoulder`` - (``int``)
   * Not a normal convar, controls the key used to switch the cameras focused shoulder.
 * ``sv_thirdperson_allowed`` - (``0/1``)

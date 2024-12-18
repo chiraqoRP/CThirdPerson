@@ -10,23 +10,23 @@ if CLIENT then
 	local function DoFirstPersonAim(ply, viewOrigin, sightDelta)
 		if sightDelta != 0 then
 			local eyePos = eEyePos(ply)
-	
+
 			viewOrigin.x = Lerp(sightDelta, viewOrigin.x, eyePos.x)
 			viewOrigin.y = Lerp(sightDelta, viewOrigin.y, eyePos.y)
 			viewOrigin.z = Lerp(sightDelta, viewOrigin.z, eyePos.z)
-	
+
 			local shouldOverrideAim = viewOrigin:DistToSqr(eyePos) < 10
-	
+
 			return shouldOverrideAim
 		end
-	
+
 		return false
 	end
 
 	local pGetActiveWeapon = PLAYER.GetActiveWeapon
 	local eGetVelocity = ENTITY.GetVelocity
-	local eIsValid = ENTITY.IsValid
 	local fpAiming = CreateClientConVar("cl_thirdperson_fpaiming", 0, true, true, "", 0, 1)
+	local enforce = CreateClientConVar("cl_thirdperson_enforce_hook", 0, true, true, "", 0, 1)
 
 	hook.Add("CalcView", "CThirdPerson.Main", function(ply, origin, angles, fov, zNear, zFar)
 		if !hasCachedClass then
@@ -78,9 +78,21 @@ if CLIENT then
 		-- 	VManip.QueuedAnim = nil
 		-- end
 
-		origin:Set(finalOrigin)
+		if !enforce:GetBool() then
+			origin:Set(finalOrigin)
 
-		fov = viewFov
+			return
+		end
+
+		local view = {
+			origin = finalOrigin,
+			angles = angles,
+			fov = viewFov,
+			znear = zNear,
+			zfar = zFar
+		}
+
+		return view
 	end)
 
 	hook.Add("ShouldDrawLocalPlayer", "CThirdPerson.DrawPlayer", function(ply)
