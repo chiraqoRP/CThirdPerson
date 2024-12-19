@@ -53,9 +53,6 @@ local pGetViewOffset = PLAYER.GetViewOffset
 local pGetViewOffsetDucked = PLAYER.GetViewOffsetDucked
 local eGetMoveType = ENTITY.GetMoveType
 local traceMin, traceMax = Vector(-10, -10, -10), Vector(10, 10, 10)
-local lastFinalOrigin = Vector(0, 0, 0)
-local lastViewOrigin = Vector(0, 0, 0)
-local lastViewAngles = Angle(0, 0, 0)
 
 function CoreClass:GetViewOrigin(ply, curAng, horizontalAng, verticalAng, distanceMul, doTrace)
 	local viewOrigin = Vector(0, 0, 0)
@@ -84,14 +81,6 @@ function CoreClass:GetViewOrigin(ply, curAng, horizontalAng, verticalAng, distan
 		viewOrigin:Sub(crouchViewOffset)
 	end
 
-	-- COMMENT
-	if viewOrigin == lastViewOrigin and curAng == lastViewAngles then
-		return lastFinalOrigin
-	end
-
-	lastViewOrigin = viewOrigin
-	lastViewAngles = curAng
-
 	if !doTrace then
 		return viewOrigin
 	end
@@ -105,9 +94,6 @@ function CoreClass:GetViewOrigin(ply, curAng, horizontalAng, verticalAng, distan
 	traceData.maxs = traceMax
 
 	local finalOrigin = util.TraceHull(traceData).HitPos
-
-	-- COMMENT
-	lastFinalOrigin = finalOrigin
 
 	return finalOrigin
 end
