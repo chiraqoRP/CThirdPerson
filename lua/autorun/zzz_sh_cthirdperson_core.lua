@@ -324,6 +324,9 @@ local sightDeltaFuncs = {
 	["arc9_base"] = function(wep)
 		return math.ease.InOutSine(wep:GetSightDelta())
 	end,
+	["tacrp_base"] = function(wep)
+		return math.ease.InOutSine(wep:GetSightDelta())
+	end,
 	["mg_base"] = function(wep)
 		return math.ease.InOutSine(wep:GetAimDelta())
 	end,
@@ -408,6 +411,9 @@ local sightZoomFuncs = {
         end
 
 		return sightZoom
+	end,
+	["tacrp_base"] = function(wep, fov)
+		return wep:GetMagnification()
 	end,
 	["cw_base"] = function(wep, fov)
 		if !wep.telescopicsFOVRange or !wep.telescopicsFOVIndex then
