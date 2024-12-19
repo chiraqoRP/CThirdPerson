@@ -98,7 +98,7 @@ if CLIENT then
 	hook.Add("ShouldDrawLocalPlayer", "CThirdPerson.DrawPlayer", function(ply)
 		local canDo = cCore:CanDoThirdPerson(ply)
 
-		if canDo and (cCore:GetWeaponSightDelta(pGetActiveWeapon(ply)) == 0 or !fpAiming:GetBool()) then
+		if canDo and (cCore:GetWeaponSightDelta(pGetActiveWeapon(ply)) <= 0.90 or !fpAiming:GetBool()) then
 			return true
 		end
 	end)
