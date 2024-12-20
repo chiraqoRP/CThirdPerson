@@ -244,9 +244,6 @@ end
 
 local pKeyDown = PLAYER.KeyDown
 local pGetDuckSpeed = PLAYER.GetDuckSpeed
-local tickRate = math.Round(1 / engine.TickInterval())
-local crouchChangeRate = math.Round(3 * (tickRate / 66))
-local shoulderChangeRate = math.Round(3 * (tickRate / 66))
 
 function CoreClass:UpdateFactors(ply)
 	if !IsValid(ply) then
@@ -264,13 +261,13 @@ function CoreClass:UpdateFactors(ply)
 	local tickInterval = engine.TickInterval()
 	local isCrouching = (eIsFlagSet(ply, FL_ONGROUND) and pKeyDown(ply, IN_DUCK)) or eIsFlagSet(ply, FL_DUCKING)
 	local crouchTo = isCrouching and 1 or 0
-	local adjustedCrouchRate = crouchChangeRate * (math.Round(pGetDuckSpeed(ply), 1) / 0.1)
-	local crouchFrac = math.Approach(self:GetCrouchFactor(ply, true), crouchTo, adjustedCrouchRate * tickInterval)
+	local adjustedCrouchRate = (math.Round(pGetDuckSpeed(ply), 1) / 0.1) * 3.0
+	local crouchFrac = math.Approach(self:GetCrouchFactor(ply, true), crouchTo, tickInterval * adjustedCrouchRate)
 
 	self:SetCrouchFactor(ply, crouchFrac)
 
 	local shoulderTo = shoulderToggle[ply] and 1 or 0
-	local shoulderFrac = math.Approach(self:GetShoulderFactor(ply, true), shoulderTo, shoulderChangeRate * tickInterval)
+	local shoulderFrac = math.Approach(self:GetShoulderFactor(ply, true), shoulderTo, tickInterval * 3.0)
 
 	self:SetShoulderFactor(ply, shoulderFrac)
 
