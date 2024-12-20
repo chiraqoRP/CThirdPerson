@@ -279,7 +279,7 @@ hook.Add("PlayerButtonDown", "CThirdPerson.ShoulderSwitch", function(ply, button
 		return
 	end
 
-	if CLIENT and !IsFirstTimePredicted() then
+	if !game.SinglePlayer() and CLIENT and !IsFirstTimePredicted() then
 		return
 	end
 
